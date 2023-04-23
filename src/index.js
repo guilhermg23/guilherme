@@ -17,10 +17,7 @@ const redis = createClient({
     password: process.env.REDIS_DB_PASSWORD
 })
 
-const getIpAddress = (req) =>
-    req.connection.localAddress === req.connection.remoteAddress
-        ? 'localhost'
-        : ip.getClientIp()
+const getIpAddress = (req) => ip.getClientIp(req)
 
 app.post('/', async (req, res) => {
     const { template } = req.body
@@ -39,7 +36,7 @@ app.post('/', async (req, res) => {
         const cachedId = Object.keys(data)[0]
         if (cachedId) {
             await setKey(ipAddress, cachedId, template)
-            return res.json({ cachedId })
+            return res.json({ id: cachedId })
         }
     }
 
